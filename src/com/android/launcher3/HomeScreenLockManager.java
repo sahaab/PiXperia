@@ -96,6 +96,10 @@ public class HomeScreenLockManager {
             } catch (InvocationTargetException e2) {Log.d("Power Manager", "Failed, Invocation Targer");
             } catch (SecurityException e3) {Log.d("Power Manager", "Failed, Security");
             }
+
+        //PowerManager manager = (PowerManager) mContext,getSystemService(Context.POWER_SERVICE);
+        //manager.goToSleep(Long.valueOf(SystemClock.uptimeMillis()));
+
         //}
         //PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         //pm.goToSleep(SystemClock.uptimeMillis() + 1);
@@ -108,9 +112,9 @@ public class HomeScreenLockManager {
             sGoToSleepMethod = PowerManager.class.getMethod("goToSleep", new Class[]{Long.TYPE});
             Log.d("Power Manager", "Initialized");
             return;
-        } catch (IllegalAccessException e) { Log.d("Power Manager", "Failed, Illegal Access");
-        } catch (NoSuchFieldException e2) {Log.d("Power Manager", "Failed, No Field");
-        } catch (NoSuchMethodException e3) {Log.d("Power Manager", "Failed, No Method");
+        } catch (IllegalAccessException e) { Log.d("Power Manager", "Failed, Illegal Access" + e.getMessage());
+        } catch (NoSuchFieldException e2) {Log.d("Power Manager", "Failed, No Field" + e2.getMessage());
+        } catch (NoSuchMethodException e3) {Log.d("Power Manager", "Failed, No Method" + e3.getMessage());
         }
         sPowerPermission = null;
         sGoToSleepMethod = null;

@@ -17,11 +17,15 @@
 ** limitations under the License.
 */
 -->
+
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android.launcher3">
-    <!--android:sharedUserId="com.sonymobile.home"
-    coreApp="true"-->
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.android.launcher3"
+    android:sharedUserId="com.sonymobile.home"
+    coreApp="true">
+    <original-package android:name="com.sonyericsson.home" />
+
     <uses-sdk android:targetSdkVersion="26" android:minSdkVersion="21"/>
     <uses-feature android:glEsVersion="0x00020000" android:required="false"/>
     <!--
@@ -57,7 +61,8 @@
     <uses-permission android:name="com.google.android.apps.nexuslauncher.permission.QSB" />
 
 
-    <uses-permission android:name="android.permission.DEVICE_POWER"/>
+    <uses-permission android:name="android.permission.DEVICE_POWER"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:backupAgent="com.android.launcher3.LauncherBackupAgent"
@@ -69,7 +74,8 @@
         android:theme="@style/LauncherTheme"
         android:largeHeap="@bool/config_largeHeap"
         android:restoreAnyVersion="true"
-        android:supportsRtl="true" >
+        android:supportsRtl="true"
+        tools:ignore="ManifestResource">
 
         <receiver android:name="com.android.launcher3.pixel.WeatherUpdateReceiver" android:permission="android.permission.CAPTURE_AUDIO_HOTWORD">
             <intent-filter>
