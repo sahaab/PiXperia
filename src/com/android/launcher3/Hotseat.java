@@ -25,7 +25,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,7 +38,6 @@ import com.android.launcher3.dynamicui.ExtractedColors;
 import com.android.launcher3.logging.UserEventDispatcher;
 import com.android.launcher3.userevent.nano.LauncherLogProto.ContainerType;
 import com.android.launcher3.userevent.nano.LauncherLogProto.Target;
-import com.android.launcher3.util.Themes;
 
 public class Hotseat extends FrameLayout
         implements UserEventDispatcher.LogContainerProvider {
@@ -69,8 +67,8 @@ public class Hotseat extends FrameLayout
         super(context, attrs, defStyle);
         mLauncher = Launcher.getLauncher(context);
         mHasVerticalHotseat = mLauncher.getDeviceProfile().isVerticalBarLayout();
-        mBackgroundColor = ColorUtils.setAlphaComponent(
-                Themes.getAttrColor(context, android.R.attr.colorPrimary), 0);
+        //mBackgroundColor = ResourcesCompat.getColor(getResources(), R.color.allAppsbg, null);
+        mBackgroundColor = Color.TRANSPARENT;
         mBackground = new ColorDrawable(mBackgroundColor);
         setBackground(mBackground);
     }
@@ -180,7 +178,8 @@ public class Hotseat extends FrameLayout
 
     public void updateColor(ExtractedColors extractedColors, boolean animate) {
         if (!mHasVerticalHotseat) {
-            int color = extractedColors.getColor(ExtractedColors.HOTSEAT_INDEX, Color.TRANSPARENT);
+            //int color = extractedColors.getColor(ExtractedColors.HOTSEAT_INDEX, Color.TRANSPARENT);
+            int color = Color.TRANSPARENT;
             if (mBackgroundColorAnimator != null) {
                 mBackgroundColorAnimator.cancel();
             }

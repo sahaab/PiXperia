@@ -7,6 +7,7 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.MotionEvent;
@@ -25,7 +26,6 @@ import com.android.launcher3.Workspace;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.userevent.nano.LauncherLogProto.Action;
 import com.android.launcher3.userevent.nano.LauncherLogProto.ContainerType;
-import com.android.launcher3.util.Themes;
 import com.android.launcher3.util.TouchController;
 
 /**
@@ -102,7 +102,7 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
         mProgress = 1f;
 
         mEvaluator = new ArgbEvaluator();
-        mAllAppsBackgroundColor = Themes.getAttrColor(l, android.R.attr.colorPrimary);
+        mAllAppsBackgroundColor = ResourcesCompat.getColor(l.getResources(), R.color.allAppsbg, null);
     }
 
     @Override
@@ -283,7 +283,8 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
         // Use a light status bar (dark icons) if all apps is behind at least half of the status
         // bar. If the status bar is already light due to wallpaper extraction, keep it that way.
         boolean forceLight = shift <= mStatusBarHeight / 2;
-        mLauncher.activateLightSystemBars(forceLight, true /* statusBar */, true /* navBar */);
+        // Dont Update Light Statusbar
+        //mLauncher.activateLightSystemBars(forceLight, true /* statusBar */, true /* navBar */);
     }
 
     /**
@@ -305,6 +306,7 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
 
         mAppsView.setRevealDrawableColor(ColorUtils.setAlphaComponent(color, bgAlpha));
         mAppsView.getContentView().setAlpha(alpha);
+        mAppsView.getRevealView().setAlpha(alpha);
         mAppsView.setTranslationY(shiftCurrent);
 
         if (!mLauncher.getDeviceProfile().isVerticalBarLayout()) {

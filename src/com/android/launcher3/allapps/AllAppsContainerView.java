@@ -22,6 +22,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.InsetDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Selection;
 import android.text.Spannable;
@@ -114,15 +115,17 @@ public class AllAppsContainerView extends BaseContainerView implements DragSourc
     @Override
     protected void updateBackground(
             int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
+        ColorDrawable bgdrawable = new ColorDrawable(ResourcesCompat.getColor(getResources(), R.color.allAppsbg, null));
         if (FeatureFlags.LAUNCHER3_ALL_APPS_PULL_UP) {
             if (mLauncher.getDeviceProfile().isVerticalBarLayout()) {
-                getRevealView().setBackground(new InsetDrawable(mBaseDrawable,
+                getRevealView().setBackground(new InsetDrawable(bgdrawable,
                         paddingLeft, paddingTop, paddingRight, paddingBottom));
                 getContentView().setBackground(
                         new InsetDrawable(new ColorDrawable(Color.TRANSPARENT),
                                 paddingLeft, paddingTop, paddingRight, paddingBottom));
             } else {
-                getRevealView().setBackground(mBaseDrawable);
+                //getRevealView().setBackground(mBaseDrawable);
+                getRevealView().setBackground(bgdrawable);
             }
         } else {
             super.updateBackground(paddingLeft, paddingTop, paddingRight, paddingBottom);
