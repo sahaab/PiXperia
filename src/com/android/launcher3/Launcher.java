@@ -1225,6 +1225,12 @@ public class Launcher extends BaseActivity
         super.onWindowFocusChanged(hasFocus);
         mHasFocus = hasFocus;
 
+        if(hasFocus) {
+            int immersivePref = Integer.parseInt(mSharedPrefs.getString("pref_immersive", "0"));
+            setImmersiveMode(immersivePref);
+        }
+
+
         if (mLauncherCallbacks != null) {
             mLauncherCallbacks.onWindowFocusChanged(hasFocus);
         }
@@ -1463,11 +1469,8 @@ public class Launcher extends BaseActivity
                 mLauncherView.setSystemUiVisibility(uiOptions);
                 break;
             case 1: // Full Immersive
-                uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
                 Log.d("Immersive", "Im1" + i);
@@ -1475,8 +1478,6 @@ public class Launcher extends BaseActivity
                 break;
             case 2: // Hide Statusbar
                 uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
@@ -1484,9 +1485,7 @@ public class Launcher extends BaseActivity
                 mLauncherView.setSystemUiVisibility(uiOptions);
                 break;
             case 3: // Hide Navbar
-                uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                uiOptions =  View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
