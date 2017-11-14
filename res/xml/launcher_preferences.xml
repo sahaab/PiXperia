@@ -52,12 +52,14 @@
         android:persistent="true"
         />
 
-    <SwitchPreference
-        android:key="pref_Statusbar"
-        android:title="Hide Statusbar"
-        android:defaultValue="false"
-        android:persistent="true"
-        />
+    <ListPreference
+        android:key="pref_immersive"
+        android:title="Immersive Mode"
+        android:summary=""
+        android:entries="@array/immersiveOptions"
+        android:entryValues="@array/immersiveValues"
+        android:defaultValue="0"
+        android:persistent="true" />
 
     <SwitchPreference
         android:key="pref_pillWidget"

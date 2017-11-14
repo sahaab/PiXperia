@@ -65,6 +65,7 @@
 
         <include
             layout="@layout/qsb_container"
+            android:visibility="gone"
             android:id="@+id/qsb_container" />
 
         <include layout="@layout/widgets_view"

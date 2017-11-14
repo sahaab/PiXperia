@@ -134,4 +134,19 @@
     <item type="id" name="action_resize" />
     <item type="id" name="action_deep_shortcuts" />
     <item type="id" name="action_dismiss_notification" />
+
+    <string-array name="immersiveOptions">
+        <item>Disabled</item>
+        <item>Full Immersive</item>
+        <item>Hide Statusbar</item>
+        <item>Hide Navbar</item>
+    </string-array>
+
+    <string-array name="immersiveValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
 </resources>

@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -68,6 +69,7 @@ public abstract class Qsb extends FrameLayout implements View.OnClickListener {
         applyOpaPreference();
         applyMinusOnePreference();
         applyVisibility();
+        setVisible();
     }
 
     private void applyMinusOnePreference() { //bh
@@ -197,6 +199,21 @@ public abstract class Qsb extends FrameLayout implements View.OnClickListener {
         }
         if (qsbConnector != null) {
             qsbConnector.setVisibility(visibility);
+        }
+    }
+
+    private void setVisible() {
+        SharedPreferences prefs = mLauncher.getSharedPrefs();
+
+        boolean pillWidget = prefs.getBoolean("pref_pillWidget", false);
+
+        if(!pillWidget) {
+            if (mQsbView != null) {
+                mQsbView.setVisibility(View.GONE);
+            }
+            if (qsbConnector != null) {
+                qsbConnector.setVisibility(View.GONE);
+            }
         }
     }
 

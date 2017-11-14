@@ -29,6 +29,7 @@ import android.app.WallpaperManager;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -325,6 +326,10 @@ public class Workspace extends PagedView
     private AccessibilityDelegate mPagesAccessibilityDelegate;
     private OnStateChangeListener mOnStateChangeListener;
 
+    private SharedPreferences mSharedPrefs;
+
+    private boolean mQsbOption = true;
+
     /**
      * Used to inflate the Workspace from XML.
      *
@@ -358,6 +363,10 @@ public class Workspace extends PagedView
 
         setOnHierarchyChangeListener(this);
         setHapticFeedbackEnabled(false);
+
+        mSharedPrefs = mLauncher.getSharedPrefs();
+
+        mQsbOption = mSharedPrefs.getBoolean("pref_pillWidget",true);
 
         initWorkspace();
 
@@ -620,19 +629,28 @@ public class Workspace extends PagedView
             });
         }
         // Always add a QSB on the first screen.
-        if (qsb == null) {
+
+        if(mQsbOption) {
+            if (qsb == null) {
             // In transposed layout, we add the QSB in the Grid. As workspace does not touch the
             // edges, we do not need a full width QSB.
-            qsb = mLauncher.getLayoutInflater().inflate(
-                    mLauncher.getDeviceProfile().isVerticalBarLayout()
-                            ? R.layout.qsb_container : R.layout.qsb_blocker_view,
-                    firstPage, false);
+                qsb = mLauncher.getLayoutInflater().inflate(
+                        mLauncher.getDeviceProfile().isVerticalBarLayout()
+                                ? R.layout.qsb_container : R.layout.qsb_blocker_view,
+                        firstPage, false);
+            }
+        } else {
+            if(qsb!=null) {
+                qsb.setVisibility(View.GONE);
+            }
         }
 
         CellLayout.LayoutParams lp = new CellLayout.LayoutParams(0, 0, firstPage.getCountX(), 1);
         lp.canReorder = false;
-        if (!firstPage.addViewToCellLayout(qsb, 0, getEmbeddedQsbId(), lp, true)) {
-            Log.e(TAG, "Failed to add to item at (0, 0) to CellLayout");
+        if(qsb != null) {
+            if (!firstPage.addViewToCellLayout(qsb, 0, getEmbeddedQsbId(), lp, true)) {
+                Log.e(TAG, "Failed to add to item at (0, 0) to CellLayout");
+            }
         }
     }
 

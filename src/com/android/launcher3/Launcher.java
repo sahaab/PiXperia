@@ -463,7 +463,15 @@ public class Launcher extends BaseActivity
             mLauncherCallbacks.onCreate(savedInstanceState);
         }
 
+        /*
+            PiXperia Code
+         */
+
+        // D2S
         new HomeScreenLockManager(this);
+
+
+
 
     }
 
@@ -529,7 +537,7 @@ public class Launcher extends BaseActivity
         }
 
         if (newSystemUiFlags != oldSystemUiFlags) {
-            getWindow().getDecorView().setSystemUiVisibility(newSystemUiFlags);
+            //getWindow().getDecorView().setSystemUiVisibility(newSystemUiFlags);
         }
     }
 
@@ -975,6 +983,7 @@ public class Launcher extends BaseActivity
             mLauncherCallbacks.preOnResume();
         }
 
+
         super.onResume();
         getUserEventDispatcher().resetElapsedSessionMillis();
 
@@ -1079,6 +1088,7 @@ public class Launcher extends BaseActivity
         if (mLauncherCallbacks != null) {
             mLauncherCallbacks.onResume();
         }
+
 
     }
 
@@ -1317,10 +1327,44 @@ public class Launcher extends BaseActivity
         mQsbContainer = mDragLayer.findViewById(mDeviceProfile.isVerticalBarLayout()
                 ? R.id.workspace_blocked_row : R.id.qsb_container);
         mWorkspace.initParentViews(mDragLayer);
-
+/*
         mLauncherView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);*/
+
+
+        int immersivePref = Integer.parseInt(mSharedPrefs.getString("pref_immersive", "0"));
+        View decorView = getWindow().getDecorView();
+        Log.d("Immersive", "Im" + immersivePref);
+        switch (immersivePref) {
+            case 1: // Full Immersive
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
+                mLauncherView.setSystemUiVisibility(uiOptions);
+                decorView.setSystemUiVisibility(uiOptions);
+                break;
+            case 2: // Hide Statusbar
+                uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
+                mLauncherView.setSystemUiVisibility(uiOptions);
+                decorView.setSystemUiVisibility(uiOptions);
+                break;
+            case 3: // Hide Navbar
+                uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+                mLauncherView.setSystemUiVisibility(uiOptions);
+                decorView.setSystemUiVisibility(uiOptions);
+                break;
+            default:
+                break;
+        }
 
         // Setup the drag layer
         mDragLayer.setup(this, mDragController, mAllAppsController);

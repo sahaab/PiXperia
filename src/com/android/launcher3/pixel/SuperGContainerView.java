@@ -67,7 +67,11 @@ public class SuperGContainerView extends Qsb
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (mTouchDelegate != null) {
-            mLauncher.getWorkspace().findViewById(R.id.workspace_blocked_row).setTouchDelegate(mTouchDelegate);
+            try {
+                mLauncher.getWorkspace().findViewById(R.id.workspace_blocked_row).setTouchDelegate(mTouchDelegate);
+            } catch (NullPointerException ne) {
+
+            }
         }
     }
 
