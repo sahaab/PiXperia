@@ -496,7 +496,8 @@ public class Launcher extends BaseActivity
             // It's possible that All Apps is visible when this is run,
             // so always use light status bar in that case. Only change nav bar color to status bar
             // color when All Apps is visible.
-            activateLightSystemBars(lightStatusBar || isAllAppsVisible(), true, isAllAppsVisible());
+            //activateLightSystemBars(lightStatusBar || isAllAppsVisible(), true, isAllAppsVisible());
+            // OVERRIDING TO NOT ACTIVATE LIGHT STATUS/NAVBAR, WHILE BEING ABLE TO KEEP LIGHT THEME
         }
     }
 
@@ -506,7 +507,7 @@ public class Launcher extends BaseActivity
     /**
      * Sets the status and/or nav bar to be light or not. Light status bar means dark icons.
      * @param isLight make sure the system bar is light.
-     * @param statusBar if true, make the status bar theme match the isLight param.
+     * @param statusBar if true, make the status bar theme match the isLight param. **Uncomment to fix
      * @param navBar if true, make the nav bar theme match the isLight param.
      */
     public void activateLightSystemBars(boolean isLight, boolean statusBar, boolean navBar) {
@@ -514,14 +515,14 @@ public class Launcher extends BaseActivity
         int newSystemUiFlags = oldSystemUiFlags;
         if (isLight) {
             if (statusBar) {
-                newSystemUiFlags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                //newSystemUiFlags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             }
             if (navBar && Utilities.isAtLeastO()) {
                 newSystemUiFlags |= SYSTEM_UI_FLAG_LIGHT_NAV_BAR;
             }
         } else {
             if (statusBar) {
-                newSystemUiFlags &= ~(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                //newSystemUiFlags &= ~(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
             if (navBar && Utilities.isAtLeastO()) {
                 newSystemUiFlags &= ~(SYSTEM_UI_FLAG_LIGHT_NAV_BAR);

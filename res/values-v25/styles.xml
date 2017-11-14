@@ -15,7 +15,7 @@
     <style name="SettingsTheme" parent="@android:style/Theme.DeviceDefault.Settings">
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:actionBarTheme">@style/SettingsTheme.ActionBar</item>
-        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimary">#fff5f5f5</item>
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:colorSecondary">@color/colorSecondary</item>
         <item name="android:colorAccent">@color/colorAccent</item>
