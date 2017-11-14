@@ -1,5 +1,7 @@
 # Xperia Pixel Launcher
 
+Based on AmirZaidi's Launcher 3 https://github.com/amirzaidi/Launcher3
+
 **Pixel Launcher features added to Launcher3**
 
 - QSB with transparent rectangle, Google Pill and Date/Weather
