@@ -1,9 +1,4 @@
 # Xperia Pixel Launcher
---------
-
-*Report bugs with a logcat, if you don't know how to take one please use Google. I do not ask for donations and I did not add ads in the launcher. If you want to support me, wish me a happy birthday on September the 6th.* 
-
---------
 
 **Pixel Launcher features added to Launcher3**
 
