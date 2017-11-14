@@ -67,5 +67,4 @@
         android:defaultValue="true"
         android:persistent="true"
         />
-
 </PreferenceScreen>

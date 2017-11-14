@@ -338,6 +338,7 @@ public class Launcher extends BaseActivity
 
     private RotationPrefChangeHandler mRotationPrefChangeHandler;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (DEBUG_STRICT_MODE) {
@@ -971,6 +972,8 @@ public class Launcher extends BaseActivity
         }
     }
 
+
+
     @Override
     protected void onResume() {
         long startTime = 0;
@@ -978,6 +981,9 @@ public class Launcher extends BaseActivity
             startTime = System.currentTimeMillis();
             Log.v(TAG, "Launcher.onResume()");
         }
+
+        if (shouldRestart())
+            return;
 
         if (mLauncherCallbacks != null) {
             mLauncherCallbacks.preOnResume();
@@ -1334,37 +1340,7 @@ public class Launcher extends BaseActivity
 
 
         int immersivePref = Integer.parseInt(mSharedPrefs.getString("pref_immersive", "0"));
-        View decorView = getWindow().getDecorView();
-        Log.d("Immersive", "Im" + immersivePref);
-        switch (immersivePref) {
-            case 1: // Full Immersive
-                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
-                mLauncherView.setSystemUiVisibility(uiOptions);
-                decorView.setSystemUiVisibility(uiOptions);
-                break;
-            case 2: // Hide Statusbar
-                uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
-                mLauncherView.setSystemUiVisibility(uiOptions);
-                decorView.setSystemUiVisibility(uiOptions);
-                break;
-            case 3: // Hide Navbar
-                uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-                mLauncherView.setSystemUiVisibility(uiOptions);
-                decorView.setSystemUiVisibility(uiOptions);
-                break;
-            default:
-                break;
-        }
+        setImmersiveMode(immersivePref);
 
         // Setup the drag layer
         mDragLayer.setup(this, mDragController, mAllAppsController);
@@ -1469,6 +1445,57 @@ public class Launcher extends BaseActivity
 
     public View getWidgetsButton() {
         return mWidgetsButton;
+    }
+
+    /**
+     * Sets Immersive Mode
+     * @param i The integer of which mode to set
+     */
+    private void setImmersiveMode(int i) {
+        Log.d("Immersive", "Im" + i);
+        switch (i) {
+            case 0: // Disabled
+                int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
+                Log.d("Immersive", "Im0" + i);
+                mLauncherView.setSystemUiVisibility(uiOptions);
+                break;
+            case 1: // Full Immersive
+                uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+                Log.d("Immersive", "Im1" + i);
+                mLauncherView.setSystemUiVisibility(uiOptions);
+                break;
+            case 2: // Hide Statusbar
+                uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+                Log.d("Immersive", "Im2" + i);
+                mLauncherView.setSystemUiVisibility(uiOptions);
+                break;
+            case 3: // Hide Navbar
+                uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+
+                Log.d("Immersive", "Im3" + i);
+                mLauncherView.setSystemUiVisibility(uiOptions);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -4219,7 +4246,11 @@ public class Launcher extends BaseActivity
         if (context instanceof Launcher) {
             return (Launcher) context;
         }
-        return ((Launcher) ((ContextWrapper) context).getBaseContext());
+        try {
+            return ((Launcher) ((ContextWrapper) context).getBaseContext());
+        } catch (ClassCastException ce) {
+            return new Launcher();
+        }
     }
 
     private class RotationPrefChangeHandler implements OnSharedPreferenceChangeListener {

@@ -16,7 +16,6 @@
 
 package com.android.launcher3;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.os.Bundle;
@@ -32,7 +31,7 @@ import com.android.launcher3.graphics.IconShapeOverride;
 /**
  * Settings activity for Launcher. Currently implements the following setting: Allow rotation
  */
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends BaseActivity {
 
     private static final String ICON_BADGING_PREFERENCE_KEY = "pref_icon_badging";
     // TODO: use Settings.Secure.NOTIFICATION_BADGING
@@ -47,6 +46,11 @@ public class SettingsActivity extends Activity {
                 .replace(android.R.id.content, new LauncherSettingsFragment())
                 .commit();
     }
+    @Override
+    public void onDestroy() {
+        mShouldRestart = true;
+        super.onDestroy();
+    }
 
     /**
      * This fragment shows the launcher preferences.
@@ -56,11 +60,15 @@ public class SettingsActivity extends Activity {
         private SystemDisplayRotationLockObserver mRotationLockObserver;
         private IconBadgingObserver mIconBadgingObserver;
 
+        private Launcher mLauncher;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
             addPreferencesFromResource(R.xml.launcher_preferences);
+
+            mLauncher = Launcher.getLauncher(getContext().getApplicationContext());
 
             ContentResolver resolver = getActivity().getContentResolver();
 
@@ -105,6 +113,8 @@ public class SettingsActivity extends Activity {
                     getPreferenceScreen().removePreference(iconShapeOverride);
                 }
             }
+
+
         }
 
         @Override
@@ -117,6 +127,7 @@ public class SettingsActivity extends Activity {
                 getActivity().getContentResolver().unregisterContentObserver(mIconBadgingObserver);
                 mIconBadgingObserver = null;
             }
+            mLauncher.mShouldRestart = true;
             super.onDestroy();
         }
     }

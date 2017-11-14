@@ -19,6 +19,7 @@ package com.android.launcher3;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.util.Log;
 import android.view.View.AccessibilityDelegate;
 
 import com.android.launcher3.logging.UserEventDispatcher;
@@ -27,6 +28,8 @@ public abstract class BaseActivity extends Activity {
 
     protected DeviceProfile mDeviceProfile;
     protected UserEventDispatcher mUserEventDispatcher;
+
+    public boolean mShouldRestart = false;
 
     public DeviceProfile getDeviceProfile() {
         return mDeviceProfile;
@@ -54,4 +57,32 @@ public abstract class BaseActivity extends Activity {
         }
         return ((BaseActivity) ((ContextWrapper) context).getBaseContext());
     }
+    /**
+     * Restart Launcher when needed
+     */
+    public boolean shouldRestart(){
+        try {
+            if(mShouldRestart){
+                Log.d("Restarting", "Restarting Launcher");
+                android.os.Process.killProcess(android.os.Process.myPid());
+                finish();
+                startActivity(getIntent());
+                mShouldRestart=false;
+                return true;
+            }else{
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        shouldRestart();
+        super.onDestroy();
+        Log.d("eee","ddd");
+    }
+
 }
