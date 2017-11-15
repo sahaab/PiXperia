@@ -91,3 +91,7 @@ Lower your DPI. If you are on Android 5, you're out of luck.
 > How do I change the wallpaper for the lockscreen through the launcher?
 
 Install the Google Wallpapers app from the Play Store. Then you will be able to do that.
+
+--------
+
+Using Blurry Library by wasabeef https://github.com/wasabeef/Blurry

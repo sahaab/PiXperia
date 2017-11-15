@@ -4280,4 +4280,8 @@ public class Workspace extends PagedView
             onEndStateTransition();
         }
     }
+
+    public float getWallpaperOffset() {
+        return mWallpaperOffset.getCurrX();
+    }
 }

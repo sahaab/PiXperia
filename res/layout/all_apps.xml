@@ -33,6 +33,13 @@
         android:visibility="invisible" />
 
 
+    <com.android.launcher3.pixperia.CropImageView
+        android:id="@+id/blur_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:focusable="false" />
+
     <com.android.launcher3.allapps.AllAppsRecyclerViewContainerView
         android:id="@+id/main_content"
         android:layout_width="match_parent"

@@ -237,7 +237,7 @@ public class Launcher extends BaseActivity
 
     // Main container view for the all apps screen.
     @Thunk AllAppsContainerView mAppsView;
-    AllAppsTransitionController mAllAppsController;
+    public AllAppsTransitionController mAllAppsController;
 
     // Main container view and the model for the widget tray screen.
     @Thunk WidgetsContainerView mWidgetsView;
@@ -1094,8 +1094,6 @@ public class Launcher extends BaseActivity
         if (mLauncherCallbacks != null) {
             mLauncherCallbacks.onResume();
         }
-
-
     }
 
     @Override
@@ -2653,6 +2651,9 @@ public class Launcher extends BaseActivity
             setWaitingForResult(null);
             Toast.makeText(this, R.string.activity_not_found, Toast.LENGTH_SHORT).show();
         }
+
+        mAllAppsController.updateBG();
+
     }
 
     /**
