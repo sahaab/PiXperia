@@ -1339,14 +1339,8 @@ public class Launcher extends BaseActivity
         mQsbContainer = mDragLayer.findViewById(mDeviceProfile.isVerticalBarLayout()
                 ? R.id.workspace_blocked_row : R.id.qsb_container);
         mWorkspace.initParentViews(mDragLayer);
-/*
-        mLauncherView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);*/
 
-
-        int immersivePref = Integer.parseInt(mSharedPrefs.getString("pref_immersive", "0"));
-        setImmersiveMode(immersivePref);
+        setImmersiveMode(Integer.parseInt(mSharedPrefs.getString("pref_immersive", "0")));
 
         // Setup the drag layer
         mDragLayer.setup(this, mDragController, mAllAppsController);
@@ -1458,14 +1452,12 @@ public class Launcher extends BaseActivity
      * @param i The integer of which mode to set
      */
     private void setImmersiveMode(int i) {
-        Log.d("Immersive", "Im" + i);
         switch (i) {
             case 0: // Disabled
                 int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
 
-                Log.d("Immersive", "Im0" + i);
                 mLauncherView.setSystemUiVisibility(uiOptions);
                 break;
             case 1: // Full Immersive
@@ -1473,15 +1465,14 @@ public class Launcher extends BaseActivity
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
-                Log.d("Immersive", "Im1" + i);
                 mLauncherView.setSystemUiVisibility(uiOptions);
                 break;
             case 2: // Hide Statusbar
                 uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
-                Log.d("Immersive", "Im2" + i);
                 mLauncherView.setSystemUiVisibility(uiOptions);
                 break;
             case 3: // Hide Navbar
@@ -1489,7 +1480,6 @@ public class Launcher extends BaseActivity
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
-                Log.d("Immersive", "Im3" + i);
                 mLauncherView.setSystemUiVisibility(uiOptions);
                 break;
             default:

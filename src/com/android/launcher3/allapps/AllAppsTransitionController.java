@@ -307,6 +307,7 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
         mAppsView.setRevealDrawableColor(ColorUtils.setAlphaComponent(color, bgAlpha));
         mAppsView.getContentView().setAlpha(alpha);
         mAppsView.getRevealView().setAlpha(alpha);
+        //mLauncher.getWindow().setNavigationBarColor(color);
         mAppsView.setTranslationY(shiftCurrent);
 
         if (!mLauncher.getDeviceProfile().isVerticalBarLayout()) {

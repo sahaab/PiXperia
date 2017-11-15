@@ -52,6 +52,12 @@ public class SettingsActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Override
+    public void onPause() {
+        mShouldRestart = true;
+        super.onPause();
+    }
+
     /**
      * This fragment shows the launcher preferences.
      */

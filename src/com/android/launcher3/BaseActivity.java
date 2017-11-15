@@ -82,7 +82,12 @@ public abstract class BaseActivity extends Activity {
     public void onDestroy() {
         shouldRestart();
         super.onDestroy();
-        Log.d("eee","ddd");
+    }
+
+    @Override
+    protected void onPause() {
+        shouldRestart();
+        super.onPause();
     }
 
 }
