@@ -84,6 +84,8 @@ public class CropImageView extends ImageView {
         this.r = r;
         this.b = b;
 
+
         return super.setFrame(l, t, r, b);
     }
+
 }

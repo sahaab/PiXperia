@@ -25,6 +25,8 @@ import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.app.WallpaperInfo;
+import android.app.WallpaperManager;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
 import android.content.ActivityNotFoundException;
@@ -42,8 +44,10 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -109,6 +113,7 @@ import com.android.launcher3.model.PackageItemInfo;
 import com.android.launcher3.model.WidgetItem;
 import com.android.launcher3.notification.NotificationListener;
 import com.android.launcher3.pageindicators.PageIndicator;
+import com.android.launcher3.pixperia.CropImageView;
 import com.android.launcher3.popup.PopupContainerWithArrow;
 import com.android.launcher3.popup.PopupDataProvider;
 import com.android.launcher3.shortcuts.DeepShortcutManager;
@@ -142,13 +147,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jp.wasabeef.blurry.Blurry;
+
 /**
  * Default launcher application.
  */
 public class Launcher extends BaseActivity
         implements LauncherExterns, View.OnClickListener, OnLongClickListener,
-                   LauncherModel.Callbacks, View.OnTouchListener, LauncherProviderChangeListener,
-                   AccessibilityManager.AccessibilityStateChangeListener {
+        LauncherModel.Callbacks, View.OnTouchListener, LauncherProviderChangeListener,
+        AccessibilityManager.AccessibilityStateChangeListener {
     public static final String TAG = "Launcher";
     static final boolean LOGD = false;
 
@@ -471,6 +478,9 @@ public class Launcher extends BaseActivity
         // D2S
         new HomeScreenLockManager(this);
 
+        // Blur Bg
+        blurImageView = (CropImageView) findViewById(R.id.blur_bg);
+        mblurBGPref = mSharedPrefs.getBoolean("pref_blurBG", true);
 
 
 
@@ -858,7 +868,7 @@ public class Launcher extends BaseActivity
 
     /** @Override for MNC */
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            int[] grantResults) {
+                                           int[] grantResults) {
         PendingRequestArgs pendingArgs = mPendingRequestArgs;
         if (requestCode == REQUEST_PERMISSION_CALL_PHONE && pendingArgs != null
                 && pendingArgs.getRequestCode() == REQUEST_PERMISSION_CALL_PHONE) {
@@ -1028,7 +1038,7 @@ public class Launcher extends BaseActivity
             mBindOnResumeCallbacks.clear();
             if (DEBUG_RESUME_TIME) {
                 Log.d(TAG, "Time spent processing callbacks in onResume: " +
-                    (System.currentTimeMillis() - startTimeCallbacks));
+                        (System.currentTimeMillis() - startTimeCallbacks));
             }
         }
         if (mOnResumeCallbacks.size() > 0) {
@@ -1197,7 +1207,7 @@ public class Launcher extends BaseActivity
     }
 
     public void addToCustomContentPage(View customContent,
-            CustomContentCallbacks callbacks, String description) {
+                                       CustomContentCallbacks callbacks, String description) {
         mWorkspace.addToCustomContentPage(customContent, callbacks, description);
     }
 
@@ -1518,7 +1528,7 @@ public class Launcher extends BaseActivity
      * @param data The intent describing the shortcut.
      */
     private void completeAddShortcut(Intent data, long container, long screenId, int cellX,
-            int cellY, PendingRequestArgs args) {
+                                     int cellY, PendingRequestArgs args) {
         int[] cellXY = mTmpAddItemCellCoordinates;
         CellLayout layout = getCellLayout(container, screenId);
 
@@ -1587,7 +1597,7 @@ public class Launcher extends BaseActivity
      * @param appWidgetId The app widget id
      */
     @Thunk void completeAddAppWidget(int appWidgetId, ItemInfo itemInfo,
-            AppWidgetHostView hostView, LauncherAppWidgetProviderInfo appWidgetInfo) {
+                                     AppWidgetHostView hostView, LauncherAppWidgetProviderInfo appWidgetInfo) {
 
         if (appWidgetInfo == null) {
             appWidgetInfo = mAppWidgetManager.getLauncherAppWidgetInfo(appWidgetId);
@@ -1820,7 +1830,7 @@ public class Launcher extends BaseActivity
                         topOpenView.getExtendedTouchView(), ContainerType.DEEPSHORTCUTS);
             } else if (topOpenView instanceof Folder) {
                 ued.logActionCommand(Action.Command.HOME_INTENT,
-                            ((Folder) topOpenView).getFolderIcon(), ContainerType.FOLDER);
+                        ((Folder) topOpenView).getFolderIcon(), ContainerType.FOLDER);
             } else if (alreadyOnHome) {
                 ued.logActionCommand(Action.Command.HOME_INTENT,
                         mWorkspace.getState().containerType, mWorkspace.getCurrentPage());
@@ -1986,10 +1996,10 @@ public class Launcher extends BaseActivity
 
     @Override
     public void startIntentSenderForResult (IntentSender intent, int requestCode,
-            Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags, Bundle options) {
+                                            Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags, Bundle options) {
         try {
             super.startIntentSenderForResult(intent, requestCode,
-                fillInIntent, flagsMask, flagsValues, extraFlags, options);
+                    fillInIntent, flagsMask, flagsValues, extraFlags, options);
         } catch (IntentSender.SendIntentException e) {
             throw new ActivityNotFoundException();
         }
@@ -2001,7 +2011,7 @@ public class Launcher extends BaseActivity
      */
     @Override
     public void startSearch(String initialQuery, boolean selectInitialQuery,
-            Bundle appSearchData, boolean globalSearch) {
+                            Bundle appSearchData, boolean globalSearch) {
 
         if (initialQuery == null) {
             // Use any text typed in the launcher as the initial query
@@ -2048,9 +2058,9 @@ public class Launcher extends BaseActivity
      * Starts the global search activity. This code is a copied from SearchManager
      */
     public void startGlobalSearch(String initialQuery,
-            boolean selectInitialQuery, Bundle appSearchData, Rect sourceBounds) {
+                                  boolean selectInitialQuery, Bundle appSearchData, Rect sourceBounds) {
         final SearchManager searchManager =
-            (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         ComponentName globalSearchActivity = searchManager.getGlobalSearchActivity();
         if (globalSearchActivity == null) {
             Log.w(TAG, "No global search activity found.");
@@ -2135,7 +2145,7 @@ public class Launcher extends BaseActivity
     }
 
     void addAppWidgetFromDropImpl(int appWidgetId, ItemInfo info, AppWidgetHostView boundWidget,
-            WidgetAddFlowHandler addFlowHandler) {
+                                  WidgetAddFlowHandler addFlowHandler) {
         if (LOGD) {
             Log.d(TAG, "Adding widget from drop");
         }
@@ -2143,7 +2153,7 @@ public class Launcher extends BaseActivity
     }
 
     void addAppWidgetImpl(int appWidgetId, ItemInfo info,
-            AppWidgetHostView boundWidget, WidgetAddFlowHandler addFlowHandler, int delay) {
+                          AppWidgetHostView boundWidget, WidgetAddFlowHandler addFlowHandler, int delay) {
         if (!addFlowHandler.startConfigActivity(this, appWidgetId, info, REQUEST_CREATE_APPWIDGET)) {
             // If the configuration flow was not started, add the widget
 
@@ -2167,7 +2177,7 @@ public class Launcher extends BaseActivity
     }
 
     public void addPendingItem(PendingAddItemInfo info, long container, long screenId,
-            int[] cell, int spanX, int spanY) {
+                               int[] cell, int spanX, int spanY) {
         info.container = container;
         info.screenId = screenId;
         if (cell != null) {
@@ -2187,7 +2197,7 @@ public class Launcher extends BaseActivity
                 break;
             default:
                 throw new IllegalStateException("Unknown item type: " + info.itemType);
-            }
+        }
     }
 
     /**
@@ -2237,7 +2247,7 @@ public class Launcher extends BaseActivity
     }
 
     FolderIcon addFolder(CellLayout layout, long container, final long screenId, int cellX,
-            int cellY) {
+                         int cellY) {
         final FolderInfo folderInfo = new FolderInfo();
         folderInfo.title = getText(R.string.folder_name);
 
@@ -2485,29 +2495,29 @@ public class Launcher extends BaseActivity
     }
 
     private void onClickPendingAppItem(final View v, final String packageName,
-            boolean downloadStarted) {
+                                       boolean downloadStarted) {
         if (downloadStarted) {
             // If the download has started, simply direct to the market app.
             startMarketIntentForPackage(v, packageName);
             return;
         }
         new AlertDialog.Builder(this)
-            .setTitle(R.string.abandoned_promises_title)
-            .setMessage(R.string.abandoned_promise_explanation)
-            .setPositiveButton(R.string.abandoned_search, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startMarketIntentForPackage(v, packageName);
-                }
-            })
-            .setNeutralButton(R.string.abandoned_clean_this,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        final UserHandle user = Process.myUserHandle();
-                        mWorkspace.removeAbandonedPromise(packageName, user);
+                .setTitle(R.string.abandoned_promises_title)
+                .setMessage(R.string.abandoned_promise_explanation)
+                .setPositiveButton(R.string.abandoned_search, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startMarketIntentForPackage(v, packageName);
                     }
                 })
-            .create().show();
+                .setNeutralButton(R.string.abandoned_clean_this,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                final UserHandle user = Process.myUserHandle();
+                                mWorkspace.removeAbandonedPromise(packageName, user);
+                            }
+                        })
+                .create().show();
     }
 
     private void startMarketIntentForPackage(View v, String packageName) {
@@ -2652,7 +2662,7 @@ public class Launcher extends BaseActivity
             Toast.makeText(this, R.string.activity_not_found, Toast.LENGTH_SHORT).show();
         }
 
-        mAllAppsController.updateBG();
+        updateBG();
 
     }
 
@@ -2833,7 +2843,7 @@ public class Launcher extends BaseActivity
             if (Utilities.ATLEAST_MARSHMALLOW
                     && (item instanceof ShortcutInfo)
                     && (item.itemType == Favorites.ITEM_TYPE_SHORTCUT
-                     || item.itemType == Favorites.ITEM_TYPE_DEEP_SHORTCUT)
+                    || item.itemType == Favorites.ITEM_TYPE_DEEP_SHORTCUT)
                     && !((ShortcutInfo) item).isPromise()) {
                 // Shortcuts need some special checks due to legacy reasons.
                 startShortcutIntentSafely(intent, optsBundle, item);
@@ -3071,7 +3081,7 @@ public class Launcher extends BaseActivity
      * Shows the apps view.
      */
     public void showAppsView(boolean animated, boolean updatePredictedApps,
-            boolean focusSearchBar) {
+                             boolean focusSearchBar) {
         markAppsViewShown();
         if (updatePredictedApps) {
             tryAndUpdatePredictedApps();
@@ -3142,7 +3152,7 @@ public class Launcher extends BaseActivity
      * new state.
      */
     public Animator startWorkspaceStateChangeAnimation(Workspace.State toState,
-            boolean animated, AnimationLayerSet layerViews) {
+                                                       boolean animated, AnimationLayerSet layerViews) {
         Workspace.State fromState = mWorkspace.getState();
         Animator anim = mWorkspace.setStateWithAnimation(toState, animated, layerViews);
         updateInteraction(fromState, toState);
@@ -3162,7 +3172,7 @@ public class Launcher extends BaseActivity
     }
 
     public void exitSpringLoadedDragModeDelayed(final boolean successfulDrop, int delay,
-            final Runnable onCompleteRunnable) {
+                                                final Runnable onCompleteRunnable) {
         if (!isStateSpringLoaded()) return;
 
         if (mExitSpringLoadedModeRunnable != null) {
@@ -3917,7 +3927,7 @@ public class Launcher extends BaseActivity
      */
     @Override
     public void bindShortcutsChanged(final ArrayList<ShortcutInfo> updated,
-            final ArrayList<ShortcutInfo> removed, final UserHandle user) {
+                                     final ArrayList<ShortcutInfo> removed, final UserHandle user) {
         Runnable r = new Runnable() {
             public void run() {
                 bindShortcutsChanged(updated, removed, user);
@@ -4027,10 +4037,10 @@ public class Launcher extends BaseActivity
     }
 
     private Runnable mBindAllWidgetsRunnable = new Runnable() {
-            public void run() {
-                bindAllWidgets(mAllWidgets);
-            }
-        };
+        public void run() {
+            bindAllWidgets(mAllWidgets);
+        }
+    };
 
     @Override
     public void bindAllWidgets(MultiHashMap<PackageItemInfo, WidgetItem> allWidgets) {
@@ -4207,8 +4217,8 @@ public class Launcher extends BaseActivity
                     if (focusedView instanceof BubbleTextView
                             && focusedView.getTag() instanceof ItemInfo
                             && mAccessibilityDelegate.performAction(focusedView,
-                                    (ItemInfo) focusedView.getTag(),
-                                    LauncherAccessibilityDelegate.DEEP_SHORTCUTS)) {
+                            (ItemInfo) focusedView.getTag(),
+                            LauncherAccessibilityDelegate.DEEP_SHORTCUTS)) {
                         PopupContainerWithArrow.getOpen(this).requestFocus();
                         return true;
                     }
@@ -4255,4 +4265,50 @@ public class Launcher extends BaseActivity
             }
         }
     }
+
+    /**
+     * Blur Background Codes
+     *
+     *
+     */
+
+
+    public CropImageView blurImageView;
+
+    public boolean isLWP = false;
+
+    public boolean mblurBGPref = true;
+
+    public void updateBG() {
+        if(!mblurBGPref) {
+            blurImageView.setVisibility(View.INVISIBLE);
+            return;
+        }
+        if(blurImageView==null) blurImageView = (CropImageView) findViewById(R.id.blur_bg);
+        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(Launcher.this);
+        WallpaperInfo info = wallpaperManager.getWallpaperInfo();
+        if (info == null) {
+            blurImageView.setVisibility(View.VISIBLE);
+            final Bitmap wallpaperDrawable = compressImage(((BitmapDrawable) wallpaperManager.getDrawable()).getBitmap());
+            Blurry.with(Launcher.this)
+                    .radius(5)
+                    .sampling(1)
+                    //.color(mAllAppsBackgroundColor)
+                    .async()
+                    .from(wallpaperDrawable)
+                    .into(blurImageView);
+            blurImageView.setOffset(mWorkspace.getWallpaperOffset(), 0);
+            isLWP = false;
+        } else {
+            blurImageView.setVisibility(View.INVISIBLE);
+            isLWP = true;
+        }
+    }
+
+    public static Bitmap compressImage(Bitmap img) {
+        int nh = (int) ( img.getHeight() * (256.0 / img.getWidth()) );
+        Bitmap scaled = Bitmap.createScaledBitmap(img, 256, nh, true);
+        return scaled;
+    }
+
 }

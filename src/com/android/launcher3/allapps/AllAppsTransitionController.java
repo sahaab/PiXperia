@@ -9,19 +9,17 @@ import android.animation.ObjectAnimator;
 import android.app.WallpaperInfo;
 import android.app.WallpaperManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.ImageView;
 
 import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.Hotseat;
@@ -104,13 +102,6 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
     private boolean mIsTranslateWithoutWorkspace = false;
     private AnimatorSet mDiscoBounceAnimation;
 
-    private CropImageView blurImageView;
-
-    public Drawable blurBg;
-
-    public boolean isLWP = false;
-
-    public boolean mblurBGPref = true;
 
     public AllAppsTransitionController(Launcher l) {
         mLauncher = l;
@@ -121,8 +112,6 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
 
         mEvaluator = new ArgbEvaluator();
         mAllAppsBackgroundColor = ResourcesCompat.getColor(l.getResources(), R.color.allAppsbg, null);
-
-        mblurBGPref = mLauncher.getSharedPrefs().getBoolean("pref_blurBG", true);
     }
 
     @Override
@@ -196,7 +185,7 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
         mShiftStart = mAppsView.getTranslationY();
         openNotificationState = (FeatureFlags.PULLDOWN_NOTIFICATIONS && mProgress == 1) ? 1 : 0;
         preparePull(start);
-        updateBG();
+        mLauncher.updateBG();
     }
 
     @Override
@@ -327,25 +316,20 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
         int bgAlpha = Color.alpha((int) mEvaluator.evaluate(alpha,
                 mHotseatBackgroundColor, mAllAppsBackgroundColor));
 
-        if(blurImageView == null) {
-
-            blurImageView = (CropImageView) mLauncher.findViewById(R.id.blur_bg);
-        }
-
         mAppsView.setRevealDrawableColor(ColorUtils.setAlphaComponent(color, bgAlpha));
         mAppsView.getContentView().setAlpha(alpha);
         mAppsView.getRevealView().setAlpha(alpha);
-        blurImageView.setAlpha(alpha/2);
+        mLauncher.blurImageView.setAlpha(alpha*0.5f);
 
-        if(!isLWP&&mblurBGPref) {
+        if(!mLauncher.isLWP&&mLauncher.mblurBGPref) {
             if (progress < 1) {
                 if (!blurredAlready) {
                     //Log.d("blurring","blurring: " + progress);
-                    blurBG();
+                    //mLauncher.updateBG();
                     blurredAlready = true;
                 }
-                if (progress < 0.025f) {
-                    blurImageView.setAlpha(alpha);
+                if (progress < 0.6f) {
+                    mLauncher.blurImageView.setAlpha(alpha);
                 }
             } else if (progress == 1) {
                 blurredAlready = false;
@@ -564,7 +548,7 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
 
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom,
-            int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                               int oldLeft, int oldTop, int oldRight, int oldBottom) {
         if (!mLauncher.getDeviceProfile().isVerticalBarLayout()) {
             mShiftRange = top;
         } else {
@@ -573,66 +557,6 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
         setProgress(mProgress);
     }
 
-    public void blurBG() {
-        if(!mblurBGPref) {
-            blurImageView.setVisibility(View.INVISIBLE);
-            return;
-        }
-        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(mLauncher);
-        WallpaperInfo info = wallpaperManager.getWallpaperInfo();
-        try {
-            blurImageView.setOffset(mLauncher.getWorkspace().getWallpaperOffset(), 0);
-            if (info == null) {
-                blurImageView.setVisibility(View.VISIBLE);
-                isLWP = false;
-                blurBg = blurImageView.getDrawable();
-                if (blurBg == null) {
-                    final Bitmap wallpaperDrawable = ((BitmapDrawable) wallpaperManager.getDrawable()).getBitmap();
-                    Blurry.with(mLauncher)
-                            .radius(25)
-                            .sampling(1)
-                            .color(mAllAppsBackgroundColor)
-                            .async()
-                            .from(wallpaperDrawable)
-                            .into(blurImageView);
-                } else {
-                    //Log.d("BlurBG","Using PreBlurred Image");
-                    //blurImageView.setImageDrawable(blurBg);
-                }
-            } else {
-                blurImageView.setVisibility(View.INVISIBLE);
-                isLWP = true;
-            }
-        } catch (NullPointerException ne) {
-
-        }
-    }
-
-    public void updateBG() {
-        if(!mblurBGPref) {
-            blurImageView.setVisibility(View.INVISIBLE);
-            return;
-        }
-        blurBg = null;
-        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(mLauncher);
-        WallpaperInfo info = wallpaperManager.getWallpaperInfo();
-        if (info == null) {
-            blurImageView.setVisibility(View.VISIBLE);
-            final Bitmap wallpaperDrawable = ((BitmapDrawable) wallpaperManager.getDrawable()).getBitmap();
-            Blurry.with(mLauncher)
-                    .radius(25)
-                    .sampling(1)
-                    .color(mAllAppsBackgroundColor)
-                    .async()
-                    .from(wallpaperDrawable)
-                    .into(blurImageView);
-            blurBG();
-            isLWP = false;
-        } else {
-            blurImageView.setVisibility(View.INVISIBLE);
-            isLWP = true;
-        }
-    }
 
 
 }
