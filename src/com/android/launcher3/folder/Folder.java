@@ -512,6 +512,11 @@ public class Folder extends AbstractFloatingView implements DragSource, View.OnC
             openFolder.close(true);
         }
 
+
+
+        mLauncher.updateBG();
+        //mLauncher.blurWorkspace();
+
         DragLayer dragLayer = mLauncher.getDragLayer();
         // Just verify that the folder hasn't already been added to the DragLayer.
         // There was a one-off crash where the folder had a parent already.
@@ -581,10 +586,17 @@ public class Folder extends AbstractFloatingView implements DragSource, View.OnC
         textAlpha.setStartDelay(mMaterialExpandStagger);
         textAlpha.setInterpolator(new AccelerateInterpolator(1.5f));
 
+        mLauncher.blurImageView.setAlpha(0f);
+        Animator blurBgAlpha = ObjectAnimator.ofFloat(mLauncher.blurImageView, "alpha", 0f, 1f);
+        blurBgAlpha.setDuration(mMaterialExpandDuration);
+        blurBgAlpha.setStartDelay(mMaterialExpandStagger);
+        blurBgAlpha.setInterpolator(new AccelerateInterpolator(1.5f));
+
         anim.play(drift);
         anim.play(iconsAlpha);
         anim.play(textAlpha);
         anim.play(reveal);
+        anim.play(blurBgAlpha);
 
         mContent.setLayerType(LAYER_TYPE_HARDWARE, null);
         mFooter.setLayerType(LAYER_TYPE_HARDWARE, null);
@@ -633,9 +645,9 @@ public class Folder extends AbstractFloatingView implements DragSource, View.OnC
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mFolderName.animate().setDuration(FOLDER_NAME_ANIMATION_DURATION)
-                            .translationX(0)
-                            .setInterpolator(AnimationUtils.loadInterpolator(
-                                    mLauncher, android.R.interpolator.fast_out_slow_in));
+                        .translationX(0)
+                        .setInterpolator(AnimationUtils.loadInterpolator(
+                                mLauncher, android.R.interpolator.fast_out_slow_in));
                     mPageIndicator.playEntryAnimation();
 
                     if (updateAnimationFlag) {
@@ -725,6 +737,16 @@ public class Folder extends AbstractFloatingView implements DragSource, View.OnC
         oa.setDuration(mExpandDuration);
         setLayerType(LAYER_TYPE_HARDWARE, null);
         oa.start();
+
+
+        AnimatorSet anim = LauncherAnimUtils.createAnimatorSet();
+        Animator blurBgAlpha = ObjectAnimator.ofFloat(mLauncher.blurImageView, "alpha", 1f, 0f);
+        blurBgAlpha.setDuration(mMaterialExpandDuration);
+        blurBgAlpha.setStartDelay(mMaterialExpandStagger);
+        blurBgAlpha.setInterpolator(new AccelerateInterpolator(1.5f));
+        mLauncher.blurImageView.setAlpha(0f);
+        anim.play(blurBgAlpha);
+        //mLauncher.removeBlurWorkspace();
     }
 
     private void closeComplete(boolean wasAnimated) {
@@ -761,7 +783,7 @@ public class Folder extends AbstractFloatingView implements DragSource, View.OnC
         return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
                 itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT ||
                 itemType == LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT) &&
-                !isFull());
+                    !isFull());
     }
 
     public void onDragEnter(DragObject d) {
@@ -907,15 +929,15 @@ public class Folder extends AbstractFloatingView implements DragSource, View.OnC
     }
 
     public void onDropCompleted(final View target, final DragObject d,
-                                final boolean isFlingToDelete, final boolean success) {
+            final boolean isFlingToDelete, final boolean success) {
         if (mDeferDropAfterUninstall) {
             Log.d(TAG, "Deferred handling drop because waiting for uninstall.");
             mDeferredAction = new Runnable() {
-                public void run() {
-                    onDropCompleted(target, d, isFlingToDelete, success);
-                    mDeferredAction = null;
-                }
-            };
+                    public void run() {
+                        onDropCompleted(target, d, isFlingToDelete, success);
+                        mDeferredAction = null;
+                    }
+                };
             return;
         }
 

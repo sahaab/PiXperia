@@ -4311,4 +4311,15 @@ public class Launcher extends BaseActivity
         return scaled;
     }
 
+    public void blurWorkspace() {
+        Blurry.with(this)
+                .radius(10)
+                .sampling(8)
+                .onto((ViewGroup) mWorkspace.getWorkspaceAndHotseatCellLayouts().get(mWorkspace.getCurrentPage()));
+    }
+
+    public void removeBlurWorkspace() {
+        Blurry.delete((ViewGroup)mLauncherView);
+    }
+
 }
