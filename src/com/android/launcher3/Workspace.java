@@ -638,6 +638,9 @@ public class Workspace extends PagedView
                         mLauncher.getDeviceProfile().isVerticalBarLayout()
                                 ? R.layout.qsb_container : R.layout.qsb_blocker_view,
                         firstPage, false);
+                /*qsb = mLauncher.getLayoutInflater().inflate(
+                        R.layout.smartspace_singleline,
+                        firstPage, false);*/
             }
         } else {
             if(qsb!=null) {

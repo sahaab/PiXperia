@@ -661,4 +661,8 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         return info;
     }
 
+    public static ShortcutInfo fromActivityInfo(final LauncherActivityInfo launcherActivityInfo, final Context context) {
+        return (ShortcutInfo)new PendingInstallShortcutInfo(launcherActivityInfo, context).getItemInfo();
+    }
+
 }

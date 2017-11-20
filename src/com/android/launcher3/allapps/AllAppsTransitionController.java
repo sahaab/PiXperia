@@ -336,6 +336,12 @@ public class AllAppsTransitionController implements TouchController, VerticalPul
             }
         }
 
+        if(progress == 0) {
+            mLauncher.getWorkspace().getPageIndicator().setVisibility(View.INVISIBLE);
+        } else if (progress > 0) {
+            mLauncher.getWorkspace().getPageIndicator().setVisibility(View.VISIBLE);
+        }
+
         mAppsView.setTranslationY(shiftCurrent);
 
         if (!mLauncher.getDeviceProfile().isVerticalBarLayout()) {

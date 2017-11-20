@@ -55,6 +55,7 @@ public class HomeScreenLockManager {
     }
 
     public boolean lockScreen() {
+
         if (hasPowerManagerSleepPermission(this.mContext)) {
             goToSleep();
             return true;
@@ -88,7 +89,7 @@ public class HomeScreenLockManager {
     }
 
     private void goToSleep() {
-        //if (sGoToSleepMethod != null) {
+        if (sGoToSleepMethod != null) {
             try {
                 sGoToSleepMethod.invoke(this.mPowerManager, new Object[]{Long.valueOf(SystemClock.uptimeMillis())});
                 return;
@@ -100,7 +101,7 @@ public class HomeScreenLockManager {
         //PowerManager manager = (PowerManager) mContext,getSystemService(Context.POWER_SERVICE);
         //manager.goToSleep(Long.valueOf(SystemClock.uptimeMillis()));
 
-        //}
+        }
         //PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         //pm.goToSleep(SystemClock.uptimeMillis() + 1);
 

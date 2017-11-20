@@ -27,12 +27,21 @@
     <dimen name="dynamic_grid_overview_bar_item_width">80dp</dimen>
     <dimen name="dynamic_grid_overview_bar_spacer_width">25dp</dimen>
     <dimen name="dynamic_grid_hotseat_height">88dp</dimen>
-    <dimen name="dynamic_grid_hotseat_top_padding">8dp</dimen>
+    <dimen name="dynamic_grid_hotseat_top_padding">0.0dp</dimen>
     <dimen name="dynamic_grid_hotseat_gutter_width">24dp</dimen>
     <dimen name="dynamic_grid_workspace_top_padding">12dp</dimen>
     <dimen name="dynamic_grid_workspace_page_spacing">8dp</dimen>
     <!-- Minimum space between workspace and hotseat in spring loaded mode -->
     <dimen name="dynamic_grid_min_spring_loaded_space">8dp</dimen>
+
+    <dimen name="dynamic_grid_hotseat_bottom_padding">50.0dip</dimen>
+    <dimen name="dynamic_grid_hotseat_size">70.0dip</dimen>
+    <dimen name="dynamic_grid_hotseat_land_left_nav_bar_right_padding">0.0dip</dimen>
+    <dimen name="dynamic_grid_hotseat_land_right_nav_bar_right_padding">0.0dip</dimen>
+    <dimen name="dynamic_grid_hotseat_land_left_nav_bar_gutter_width">0.0dip</dimen>
+    <dimen name="dynamic_grid_hotseat_land_right_nav_bar_gutter_width">0.0dip</dimen>
+    <dimen name="dynamic_grid_hotseat_land_left_nav_bar_left_padding">0.0dip</dimen>
+    <dimen name="dynamic_grid_hotseat_land_right_nav_bar_left_padding">0.0dip</dimen>
 
 <!-- Drop target bar -->
     <dimen name="dynamic_grid_drop_target_size">48dp</dimen>
@@ -225,4 +234,17 @@
     <dimen name="qsb_shadow_blur_radius">1.0dip</dimen>
     <dimen name="qsb_key_shadow_offset">1.0dip</dimen>
     <dimen name="qsb_connector_gradient_end_padding">20.0dip</dimen>
+
+    <dimen name="hotseat_qsb_scroll_shadow_blur_radius">1.5dip</dimen>
+    <dimen name="hotseat_qsb_scroll_key_shadow_offset">2.0dip</dimen>
+    <dimen name="qsb_shadow_margin">6.0dip</dimen>
+    <dimen name="qsb_widget_height">60.0dip</dimen>
+    <dimen name="all_apps_extra_search_padding">8.0dip</dimen>
+    <dimen name="qsb_hotseat_bottom_margin">-4.0dip</dimen>
+
+
+    <dimen name="smartspace_title_size">28.0dip</dimen>
+    <dimen name="smartspace_weather_size">12.0dip</dimen>
+    <dimen name="smartspace_horizontal_padding">56.0dip</dimen>
+    <dimen name="smartspace_weather_img_size">32dip</dimen>
 </resources>

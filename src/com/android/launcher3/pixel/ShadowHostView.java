@@ -7,18 +7,21 @@ import android.graphics.BlurMaskFilter.Blur;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.android.launcher3.R;
+import com.google.android.apps.nexuslauncher.graphics.IcuDateTextView;
 
-public class ShadowHostView extends FrameLayout {
+public class ShadowHostView extends LinearLayout {
     private static final int cf = 38;
     private static final int cg = 89;
     private Bitmap ch;
@@ -50,32 +53,34 @@ public class ShadowHostView extends FrameLayout {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.d("SHV","SHV");
         final int n =  android.graphics.Color.BLACK;
-        if (this.mView != null && this.mView.getWidth() > 0 && this.mView.getHeight() > 0) {
-            if (this.ch == null || this.ch.getHeight() != this.mView.getHeight() || this.ch.getWidth() != this.mView.getWidth()) {
-                this.ch = Bitmap.createBitmap(this.mView.getWidth(), this.mView.getHeight(), Bitmap.Config.ALPHA_8);
+        if (mView != null && mView.getWidth() > 0 && mView.getHeight() > 0) {
+            if (ch == null || ch.getHeight() != mView.getHeight() || ch.getWidth() != mView.getWidth()) {
+                ch = Bitmap.createBitmap(mView.getWidth(), mView.getHeight(), Bitmap.Config.ALPHA_8);
             }
-            this.mCanvas.setBitmap(this.ch);
-            this.mCanvas.drawColor(n, PorterDuff.Mode.CLEAR);
-            this.mView.draw(this.mCanvas);
-            final int n2 = this.ch.getWidth() + this.cl + this.cl;
-            final int n3 = this.ch.getHeight() + this.cl + this.cl;
-            if (this.ck == null || this.ck.getWidth() != n2 || this.ck.getHeight() != n3) {
-                this.ck = Bitmap.createBitmap(n2, n3, Bitmap.Config.ALPHA_8);
+            mCanvas.setBitmap(ch);
+            mCanvas.drawColor(n, PorterDuff.Mode.CLEAR);
+            mView.draw(mCanvas);
+            final int n2 = ch.getWidth() + cl + cl;
+            final int n3 = ch.getHeight() + cl + cl;
+            if (ck == null || ck.getWidth() != n2 || ck.getHeight() != n3) {
+                ck = Bitmap.createBitmap(n2, n3, Bitmap.Config.ALPHA_8);
             }
-            this.mCanvas.setBitmap(this.ck);
-            this.mCanvas.drawColor(n, PorterDuff.Mode.CLEAR);
-            this.mPaint.setMaskFilter(blurMaskFilter);
-            this.mPaint.setAlpha(100);
-            this.mCanvas.drawBitmap(this.ch, (float)this.cl, (float)this.cl, this.mPaint);
-            this.mCanvas.setBitmap(null);
-            this.mPaint.setMaskFilter(null);
-            final float n4 = this.mView.getLeft() - this.cl;
-            final float n5 = this.mView.getTop() - this.cl;
-            this.mPaint.setAlpha(ShadowHostView.cf);
-            canvas.drawBitmap(this.ck, n4, n5, this.mPaint);
-            this.mPaint.setAlpha(ShadowHostView.cg);
-            canvas.drawBitmap(this.ck, n4, n5 + this.cj, this.mPaint);
+            mCanvas.setBitmap(ck);
+            mCanvas.drawColor(n, PorterDuff.Mode.CLEAR);
+            mPaint.setMaskFilter(blurMaskFilter);
+            mPaint.setAlpha(100);
+            mCanvas.drawBitmap(ch, (float)cl, (float)cl, mPaint);
+
+            mCanvas.setBitmap(null);
+            mPaint.setMaskFilter(null);
+            final float n4 = mView.getLeft() - cl;
+            final float n5 = mView.getTop() - cl;
+            mPaint.setAlpha(ShadowHostView.cf);
+            canvas.drawBitmap(ck, n4, n5, mPaint);
+            mPaint.setAlpha(ShadowHostView.cg);
+            canvas.drawBitmap(ck, n4, n5 + cj, mPaint);
         }
     }
     public static View getView(final RemoteViews remoteViews, final ViewGroup viewGroup, final View view) {
@@ -98,25 +103,43 @@ public class ShadowHostView extends FrameLayout {
 
     private boolean applyView(final RemoteViews remoteViews) {
         final boolean b = true;
-        if (this.mView != null) {
+        if (mView != null) {
             try {
-                final Context context = this.getContext();
+                final Context context = getContext();
                 try {
-                    remoteViews.reapply(context, this.mView);
-                    this.invalidate();
+                    remoteViews.reapply(context, mView);
+                    invalidate();
                     return b;
                 }
                 catch (RuntimeException ex) {
                     Log.e("ShadowHostView", "View reapply failed", ex);
-                    this.removeView(this.mView);
-                    this.mView = null;
+                    removeView(mView);
+                    mView = null;
                 }
             }
             catch (RuntimeException ex3) {}
         }
         try {
-            this.Dim(this.mView = remoteViews.apply(this.getContext(), this));
-            this.addView(this.mView);
+            Dim(mView = remoteViews.apply(getContext(), this));
+            addView(mView);
+            IcuDateTextView icu = (IcuDateTextView) getChildAt(0);
+            icu.setGravity(Gravity.CENTER);
+            View weatherView = getChildAt(2);
+            if(weatherView instanceof  ViewGroup) {
+                ((ViewGroup) weatherView).removeViewAt(1);
+                View weatherTxt = ((ViewGroup)((ViewGroup) weatherView).getChildAt(0)).getChildAt(1);
+                if(weatherTxt instanceof TextView) {
+                    ((TextView) weatherTxt).setTypeface(Typeface.create("google-sans", Typeface.NORMAL));
+                    ((TextView) weatherTxt).setTextSize(getResources().getDimension(R.dimen.smartspace_weather_size));
+                    ((TextView) weatherTxt).setGravity(Gravity.CENTER_VERTICAL);
+                }
+                View weatherImg = ((ViewGroup)((ViewGroup) weatherView).getChildAt(0)).getChildAt(0);
+                LayoutParams centerParams = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+                centerParams.gravity =  Gravity.CENTER;
+                centerParams.height = Math.round(getResources().getDimension(R.dimen.smartspace_weather_img_size));
+                centerParams.width = Math.round(getResources().getDimension(R.dimen.smartspace_weather_img_size));
+                weatherImg.setLayoutParams(centerParams);
+            }
             return b;
         }
         catch (RuntimeException ex2) {
@@ -132,7 +155,7 @@ public class ShadowHostView extends FrameLayout {
         else if (view instanceof ViewGroup) {
             final ViewGroup viewGroup = (ViewGroup)view;
             for (int i = viewGroup.getChildCount() - 1; i >= 0; --i) {
-                this.Dim(viewGroup.getChildAt(i));
+                Dim(viewGroup.getChildAt(i));
             }
         }
     }

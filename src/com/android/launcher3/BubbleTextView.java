@@ -17,6 +17,7 @@
 package com.android.launcher3;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -446,7 +447,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver {
      * Draws the icon badge in the top right corner of the icon bounds.
      * @param canvas The canvas to draw to.
      */
-    private void drawBadgeIfNecessary(Canvas canvas) {
+    public void drawBadgeIfNecessary(Canvas canvas) {
         if (!mForceHideBadge && (hasBadge() || mBadgeScale > 0)) {
             getIconBounds(mTempIconBounds);
             mTempSpaceForBadgeOffset.set((getWidth() - mIconSize) / 2, getPaddingTop());
@@ -672,4 +673,11 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver {
     public interface BubbleTextShadowHandler {
         void setPressedIcon(BubbleTextView icon, Bitmap background);
     }
+
+    @SuppressLint("WrongCall")
+    protected void drawWithoutBadge(final Canvas canvas) {
+        super.onDraw(canvas);
+    }
+
+
 }

@@ -35,8 +35,8 @@
         android:layout_width="1.0dip"
         android:layout_height="20.0dip"
         android:layout_gravity="center_vertical"
-        android:background="#FAFAFA"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:background="#FAFAFA"/>
 
     <LinearLayout
         android:id="@+id/title_weather_content"

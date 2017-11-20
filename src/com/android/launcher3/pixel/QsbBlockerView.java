@@ -105,7 +105,7 @@ public class QsbBlockerView extends FrameLayout implements OnStateChangeListener
 
     @Override
     public void onGsa(RemoteViews views) {
-        long n = 200L;
+        long duration = 200L;
         View oldView = mView;
         int oldState = mState;
 
@@ -132,11 +132,11 @@ public class QsbBlockerView extends FrameLayout implements OnStateChangeListener
         }
         else {
             if (oldView != null) {
-                oldView.animate().setDuration(n).alpha(0.0f).withEndAction(new QsbBlockerViewViewRemover(this, oldView));
+                oldView.animate().setDuration(duration).alpha(0.0f).withEndAction(new QsbBlockerViewViewRemover(this, oldView));
             }
             addView(mView);
             mView.setAlpha(0.0f);
-            mView.animate().setDuration(n).alpha(1.0f);
+            mView.animate().setDuration(duration).alpha(1.0f);
         }
     }
 

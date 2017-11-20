@@ -140,6 +140,9 @@ public class DeviceProfile {
     // Icon badges
     public BadgeRenderer mBadgeRenderer;
 
+    // For QSB
+    public int hotseatQsbHeight;
+
     public DeviceProfile(Context context, InvariantDeviceProfile inv,
             Point minSize, Point maxSize,
             int width, int height, boolean isLandscape) {
@@ -196,6 +199,7 @@ public class DeviceProfile {
                 res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_top_padding);
         hotseatBarBottomPaddingPx = 0;
         hotseatLandGutterPx = res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_gutter_width);
+        hotseatQsbHeight = res.getDimensionPixelSize(R.dimen.qsb_widget_height);
 
         // Determine sizes.
         widthPx = width;
@@ -529,7 +533,7 @@ public class DeviceProfile {
         PagedView workspace = (PagedView) launcher.findViewById(R.id.workspace);
         Rect workspacePadding = getWorkspacePadding(null);
         workspace.setPadding(workspacePadding.left, workspacePadding.top, workspacePadding.right,
-                workspacePadding.bottom);
+                workspacePadding.bottom + hotseatQsbHeight);
         workspace.setPageSpacing(getWorkspacePageSpacing());
 
         // Only display when enabled
@@ -573,7 +577,7 @@ public class DeviceProfile {
                 mInsets.bottom = hotseatBarTopPaddingPx;
             lp.gravity = Gravity.BOTTOM;
             lp.width = LayoutParams.MATCH_PARENT;
-            lp.height = hotseatBarHeightPx + mInsets.bottom;
+            lp.height = hotseatBarHeightPx + mInsets.bottom + hotseatQsbHeight + hotseatQsbHeight/2;
             hotseat.getLayout().setPadding(hotseatAdjustment + workspacePadding.left,
                     hotseatBarTopPaddingPx, hotseatAdjustment + workspacePadding.right,
                     hotseatBarBottomPaddingPx + mInsets.bottom);
@@ -597,7 +601,7 @@ public class DeviceProfile {
                 // Put the page indicators above the hotseat
                 lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
                 lp.height = pageIndicatorHeightPx;
-                lp.bottomMargin = hotseatBarHeightPx + mInsets.bottom;
+                lp.bottomMargin = hotseatBarHeightPx + mInsets.bottom  + Math.round(hotseatQsbHeight/1.5f) ;
             }
             pageIndicator.setLayoutParams(lp);
         }

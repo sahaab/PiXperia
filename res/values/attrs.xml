@@ -117,4 +117,13 @@
     <attr name="ambientShadowBlur" format="dimension" />
     <attr name="keyShadowBlur" format="dimension" />
     <attr name="keyShadowOffset" format="dimension" />
+
+    <declare-styleable name="ShadowInfo">
+        <attr name="ambientShadowColor" />
+        <attr name="ambientShadowBlur"  />
+        <attr name="keyShadowColor"/>
+        <attr name="keyShadowBlur"  />
+        <attr name="keyShadowOffset"  />
+    </declare-styleable>
+
 </resources>

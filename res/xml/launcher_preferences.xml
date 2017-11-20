@@ -74,4 +74,12 @@
         android:defaultValue="true"
         android:persistent="true"
         />
+
+    <SwitchPreference
+        android:key="pref_d2s"
+        android:title="Double Tap to Sleep"
+        android:summary="Double Tap to Sleep, Fingerprint Sensor will not work when unlocking"
+        android:defaultValue="true"
+        android:persistent="true"
+        />
 </PreferenceScreen>

@@ -195,10 +195,10 @@ public abstract class Qsb extends FrameLayout implements View.OnClickListener {
         int visibility = PackageManagerHelper.isAppEnabled(getContext().getPackageManager(), "com.google.android.googlequicksearchbox") ? View.VISIBLE : View.GONE;
 
         if (mQsbView != null) {
-            mQsbView.setVisibility(visibility);
+            mQsbView.setVisibility(View.GONE);
         }
         if (qsbConnector != null) {
-            qsbConnector.setVisibility(visibility);
+            qsbConnector.setVisibility(View.GONE);
         }
     }
 
